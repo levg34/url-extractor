@@ -3,17 +3,35 @@
   <head>
     <meta charset="utf-8">
     <title>GetUrl</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="js/lib/purl.js"></script>
     <script src="js/script.js"></script>
   </head>
   <body>
-    <input type="text" id="f_url" onkeydown="pressKey(event)">
-	<button onclick="clearField()">Clear</button>
-	<button onclick="processUrl()">GetUrl</button>
-	<button onclick="example()">ShowExample</button>
-    <div id="d_url"></div>
-    <div id="params"></div>
+    <div class="container">
+      <div class="panel panel-default">
+        <div class="panel-heading">Extract URL</div>
+        <div class="panel-body">
+          <input class="form-control" type="text" id="f_url" onkeydown="pressKey(event)">
+          <button class="btn-default" onclick="clearField()">Clear</button>
+          <button class="btn-default" onclick="processUrl()">GetUrl</button>
+          <button class="btn-default" onclick="example()">ShowExample</button>
+        </div>
+      </div>
+      <div>
+      <div hidden id="wait_spinner" class="alert alert-info"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i> Please wait while we test for redirections...</div>
+      <div hidden id="error_spinner" class="alert alert-warning"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Could not check for redirections</div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <div id="d_url"></div>
+          <div id="params"></div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
