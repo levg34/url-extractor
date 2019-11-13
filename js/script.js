@@ -44,12 +44,13 @@ function extractUrl(fb_url) {
 }
 
 function processUrl() {
-	var text_url = extractUrl($('#f_url').val())
-	console.log(text_url)
+	var text_url = $('#f_url').val()
+	if ($("#extract_mode").is(':checked')) {
+		text_url = extractUrl(text_url)
+	}
 	uri = new URI(text_url)
-	console.log(uri)
 	uri.displayURL()
-	checkRedirect(uri,function(new_uri) {
+	checkRedirect(uri.base,function(new_uri) {
 		uri = new URI(new_uri)
 		uri.displayURL()
 	})
@@ -71,6 +72,14 @@ function checkRedirect(_uri,callback) {
 	}).fail(function() {
 		$('#wait_spinner').hide()
 		$('#error_spinner').show()
+	})
+}
+
+function recheckRedirect() {
+	if (!uri.base) return
+	checkRedirect(uri.getUrl(),function(new_uri) {
+		uri = new URI(new_uri)
+		uri.displayURL()
 	})
 }
 	
