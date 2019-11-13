@@ -18,9 +18,11 @@
         <div class="panel-heading">Extract URL</div>
         <div class="panel-body">
           <input class="form-control" type="text" id="f_url" onkeydown="pressKey(event)">
-          <button class="btn-default" onclick="clearField()">Clear</button>
-          <button class="btn-default" onclick="processUrl()">GetUrl</button>
-          <button class="btn-default" onclick="example()">ShowExample</button>
+          <button class="btn btn-default" onclick="clearField()">Clear</button>
+          <button class="btn btn-default" onclick="processUrl()">Get Url</button>
+          <button class="btn btn-default" onclick="example()">Show Example</button>
+          <button class="btn btn-default" onclick="recheckRedirect()">Recheck Redirect</button>
+          <label class="checkbox-inline"><input type="checkbox" value="" id="extract_mode" checked>Extract mode</label>
         </div>
       </div>
       <div>
