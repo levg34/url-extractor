@@ -1,67 +1,77 @@
-var uri = ''
-var params = ''
-var used_params = []
 var checker = 'https://check-upstate.herokuapp.com/redirect?url='
+var uri = {}
 
-function getUrl(uri) {
-	var uri_enc = uri.split('?u=')[1].split('&h=')[0]
-	var uri_dec = decodeURIComponent(uri_enc)
-	return uri_dec
+function URI(url) {
+	var parser = purl(url)
+	this.base = parser.attr('protocol')+'://'+parser.attr('host')+parser.attr('path')
+	this.params = parser.param()
+	this.used_params = []
 }
-
-function toggleParam(param) {
-	// if $('#cbox1').checked ...
-	var disp_uri = uri
-	var sep = '?'
-	if (used_params.indexOf(param)==-1) {
-		used_params.push(param)
+URI.prototype.toggleParam = function(param) {
+	if (this.used_params.indexOf(param)==-1) {
+		this.used_params.push(param)
 	} else {
-		used_params.splice(used_params.indexOf(param),1)
+		this.used_params.splice(this.used_params.indexOf(param),1)
 	}
-
-	used_params.forEach(function(param) {
-		disp_uri+=sep+param+'='+params[param]
+}
+URI.prototype.getUrl = function() {
+	var res = this.base
+	var sep = '?'
+	var obj = this
+	this.used_params.forEach(function(param) {
+		res+=sep+param+'='+obj.params[param]
 		if (sep == '?') {
 			sep = '&'
 		}
 	})
-	//params[param]
-	$('#d_url').html('<a href="'+disp_uri+'">'+disp_uri+'</a>')
+	return res
+}
+URI.prototype.displayURL = function() {
+	$('#d_url').html('<a href="'+this.getUrl()+'">'+this.getUrl()+'</a>')
+	$('#params').empty()
+	for (var param in this.params) {
+		$('#params').append('<input type="checkbox" id="'+param+'" onclick="toggleParam(\''+param+'\')"> '+param+': '+this.params[param]+'<br>')
+	}
+	this.used_params.forEach(function(param) {
+		$('#'+param).prop('checked', true)
+	})
+}
+
+function extractUrl(fb_url) {
+	var uri_enc = fb_url.split('?u=')[1].split('&h=')[0]
+	var uri_dec = decodeURIComponent(uri_enc)
+	return uri_dec
 }
 
 function processUrl() {
-	uri = $('#f_url').val()
-	uri = getUrl(uri)
+	var text_url = extractUrl($('#f_url').val())
+	console.log(text_url)
+	uri = new URI(text_url)
+	console.log(uri)
+	uri.displayURL()
+	checkRedirect(uri,function(new_uri) {
+		uri = new URI(new_uri)
+		uri.displayURL()
+	})
+}
 
+function toggleParam(param) {
+	uri.toggleParam(param)
+	uri.displayURL()
+}
+
+function checkRedirect(_uri,callback) {
 	$('#error_spinner').hide()
 	$('#wait_spinner').show()
-	$.getJSON(checker+uri,function(data,status,xhr){
+	$.getJSON(checker+_uri,function(data,status,xhr){
 		$('#wait_spinner').hide()
 		if (data.redirect) {
-			uri = data.r_url
-			parseUrl()
+			callback(data.r_url)
 		}
 	}).fail(function() {
 		$('#wait_spinner').hide()
 		$('#error_spinner').show()
 	})
-	
-	parseUrl()
-}
-
-function parseUrl() {
-	var parser = purl(uri)
-
-	uri = parser.attr('protocol')+'://'+parser.attr('host')+parser.attr('path')
-	params = parser.param()
-	used_params = []
-
-	$('#params').empty()
-	for(var param in params) {
-		$('#params').append('<input type="checkbox" id="'+param+'" onclick="toggleParam(\''+param+'\')"> '+param+': '+params[param]+'<br>')
-	}
-
-	$('#d_url').html('<a href="'+uri+'">'+uri+'</a>')
 }
 	
 function pressKey(e) {
